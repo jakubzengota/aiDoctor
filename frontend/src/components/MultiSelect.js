@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FormControl, InputLabel, MenuItem, Select, Checkbox, ListItemText, OutlinedInput } from '@mui/material';
+import { Checkbox, TextField, Autocomplete } from '@mui/material';
 import { getAvailableTests } from '../services/api'; // Importuj funkcję, która pobiera testy z backendu
 
 const MultiSelect = ({ selectedTests, setSelectedTests }) => {
@@ -19,38 +19,39 @@ const MultiSelect = ({ selectedTests, setSelectedTests }) => {
         fetchAvailableTests();
     }, []);
 
-    const handleChange = (event) => {
-        const { target: { value } } = event;
-        setSelectedTests(typeof value === 'string' ? value.split(',') : value);
-    };
-
     return (
-        <FormControl fullWidth variant="outlined" sx={{ marginTop: '20px' }}>
-            <InputLabel id="lab-tests-label">Wybierz badania</InputLabel>
-            <Select
-                labelId="lab-tests-label"
-                multiple
-                value={selectedTests}
-                onChange={handleChange}
-                input={<OutlinedInput label="Wybierz badania" />}
-                renderValue={(selected) => selected.join(', ')}
-                MenuProps={{
-                    PaperProps: {
-                        style: {
-                            maxHeight: 224,
-                            width: 250,
-                        },
-                    },
-                }}
-            >
-                {availableTests.map((test, index) => (
-                    <MenuItem key={index} value={test}>
-                        <Checkbox checked={selectedTests.indexOf(test) > -1} />
-                        <ListItemText primary={test} />
-                    </MenuItem>
-                ))}
-            </Select>
-        </FormControl>
+        <Autocomplete
+            multiple
+            options={availableTests}
+            value={selectedTests}
+            onChange={(event, newValue) => {
+                setSelectedTests(newValue);
+            }}
+            disableCloseOnSelect
+            getOptionLabel={(option) => option}
+            renderOption={(props, option, { selected }) => {
+                // Dodanie klucza `key` bezpośrednio do elementu <li>, zamiast użycia go w `...props`
+                const { key, ...otherProps } = props;
+                return (
+                    <li {...otherProps} key={key}>
+                        <Checkbox
+                            style={{ marginRight: 8 }}
+                            checked={selected}
+                        />
+                        {option}
+                    </li>
+                );
+            }}
+            style={{ marginTop: '20px' }}
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Wybierz badania"
+                    placeholder="Wybierz badania"
+                />
+            )}
+        />
     );
 };
 

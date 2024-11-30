@@ -8,8 +8,6 @@ import {
     CategoryScale,
     LinearScale,
     BarElement,
-    PointElement,
-    LineElement,
     Title,
     Tooltip,
     Legend,
@@ -19,8 +17,6 @@ ChartJS.register(
     CategoryScale,
     LinearScale,
     BarElement,
-    PointElement,
-    LineElement,
     Title,
     Tooltip,
     Legend
@@ -32,13 +28,14 @@ const HomePage = () => {
     const [analysis, setAnalysis] = useState('');
     const [errors, setErrors] = useState({});
     const [availableTests, setAvailableTests] = useState([]);
+    const [referenceData, setReferenceData] = useState({}); // Nowy stan dla danych referencyjnych
 
     // Pobranie dostępnych badań przy załadowaniu komponentu
     useEffect(() => {
         const fetchAvailableTests = async () => {
             try {
                 const response = await getAvailableTests();
-                setAvailableTests(response.tests);  // Zapisujemy dostępne testy w stanie
+                setAvailableTests(response.tests);
             } catch (error) {
                 console.error('Error fetching available tests:', error);
             }
@@ -46,6 +43,26 @@ const HomePage = () => {
 
         fetchAvailableTests();
     }, []);
+
+    // Pobranie danych referencyjnych po wybraniu badań
+    useEffect(() => {
+        const fetchReferenceData = async () => {
+            let newReferenceData = {};
+            for (const test of selectedTests) {
+                try {
+                    const response = await getReferenceData(test);
+                    newReferenceData[test] = response;
+                } catch (error) {
+                    console.error(`Error fetching reference data for ${test}:`, error);
+                }
+            }
+            setReferenceData(newReferenceData);
+        };
+
+        if (selectedTests.length > 0) {
+            fetchReferenceData();
+        }
+    }, [selectedTests]);
 
     const validateInput = (test, value) => {
         if (!value || isNaN(value)) {
@@ -78,7 +95,10 @@ const HomePage = () => {
 
     const getChartData = () => {
         const labels = selectedTests;
+
         const values = selectedTests.map(test => Number(testValues[test]));
+        const minValues = selectedTests.map(test => referenceData[test]?.min_value || 0);
+        const maxValues = selectedTests.map(test => referenceData[test]?.max_value || 0);
 
         return {
             labels,
@@ -87,7 +107,17 @@ const HomePage = () => {
                     label: 'Twoja wartość',
                     data: values,
                     backgroundColor: 'rgba(75,192,192,0.6)',
-                }
+                },
+                {
+                    label: 'Minimum (zakres referencyjny)',
+                    data: minValues,
+                    backgroundColor: 'rgba(192,75,75,0.6)',
+                },
+                {
+                    label: 'Maximum (zakres referencyjny)',
+                    data: maxValues,
+                    backgroundColor: 'rgba(75,75,192,0.6)',
+                },
             ],
         };
     };
