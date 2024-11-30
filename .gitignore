@@ -1,0 +1,91 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependency directories
+node_modules/
+dist/
+dist-ssr/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Python specific ignores
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+
+# Environment variables
+.env
+.env.*
+
+# Python virtual environment
+venv/
+env/
+.vscode/
+.venv/
+
+# SQLite database files
+*.sqlite
+*.db
+
+# Compiled Python files
+*.py[cod]
+*.so
+*.pyd
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# MyPy cache
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Coverage reports
+htmlcov/
+.tox/
+.nox/
+coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Temporary and test files
+*.bak
+*.swp
+*.tmp
+*~
+*.temp
+*.out
+
+# Test results
+junit*.xml
+
+# Flask instance folder
+instance/
+
+# IDE Specific Files (PyCharm, JetBrains, VS Code, etc)
+*.idea
+.vscode/
+*.code-workspace
